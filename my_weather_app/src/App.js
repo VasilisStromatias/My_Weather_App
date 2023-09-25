@@ -30,6 +30,7 @@ function App() {
           temp: data.main.temp,
           lat: city.lat,
           lon: city.lon,
+      
         });
       })
       .catch((error) => {
@@ -37,7 +38,7 @@ function App() {
       });
   }, [city.name]);
 
-  // console.log(city.opts);
+
 
   return (
     <>

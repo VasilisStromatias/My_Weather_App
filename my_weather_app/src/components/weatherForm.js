@@ -9,7 +9,6 @@ function WeatherForm({ data }) {
 
   const GEO_API_KEY = "8f81e9f0ce84e9bd3fe8f09a74cdd101";
   const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${GEO_API_KEY}`;
-
   useEffect(() => {
     axios
       .get(geoUrl)
@@ -35,40 +34,47 @@ function WeatherForm({ data }) {
     e.preventDefault();
     data.setCity({ ...data.city, name: input, lat: lat, lon: lon });
     setInput("");
+    setOptions([]);
   }
+
+  const filteredProducts = options.filter((opt) => opt.country.includes("GR"));
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-          }}
-        />
-        <div className="options">
-          <ul className="options-list">
-            {options.map((opt, key) => {
-              return (
-                <li key={key} className="option-item">
-                  <a
-                    href="/"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setInput(e.target.innerText);
-                      setOptions([]);
-                    }}
-                  >
-                    {opt.name}
-                  </a>
-                  <span>{opt.country}</span>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="search-wrapper">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+            }}
+          />
+          <div className="search-icon">
+            <input type="submit" />
+          </div>
+          <div className="options">
+            <ul className="options-list">
+              {filteredProducts.map((opt, key) => {
+                return (
+                  <li key={key} className="option-item">
+                    <a
+                      href="/"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setInput(e.target.innerText);
+                        setOptions([]);
+                      }}
+                    >
+                      {opt.name}
+                    </a>
+                    <span>{opt.country}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
-        <button>Submit</button>
       </form>
     </div>
   );
