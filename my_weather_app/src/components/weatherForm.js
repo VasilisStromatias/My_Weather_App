@@ -1,34 +1,77 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
+function WeatherForm({ data }) {
+  const [input, setInput] = useState("");
+  const [lat, setLat] = useState(0);
+  const [lon, setLon] = useState(0);
+  const [options, setOptions] = useState([]);
 
-function WeatherForm({data}) {
-const GEO_API_KEY = 'I2JJ7BWpAGsTSemsqLvGCLe6vSpzm6M6';
-const c = 'Lamia';
-const url = `http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${GEO_API_KEY}?q=${c}`
+  const GEO_API_KEY = "8f81e9f0ce84e9bd3fe8f09a74cdd101";
+  const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${GEO_API_KEY}`;
 
-const [input, setInput] = useState('')
+  useEffect(() => {
+    axios
+      .get(geoUrl)
+      .then((response) => {
+        const res = response.data[0];
 
-// useEffect(() => {
-// axios.get(url)
-// .then (response => console.log(response))
-// .catch(error => console.log('Error Axios'))
-// })
+        // FOR THE COORDS
+        const la = res.lat.toString();
+        const lo = res.lon.toString();
+        setLat(la);
+        setLon(lo);
 
-function handleSubmit(e) {
+        // FOR THE OPTIONS
+        console.log(response.data); // (5) [{…}, {…}, {…}, {…}, {…}]
+        setOptions(response.data);
+      })
+      .catch((error) => {
+        console.log("Insert City");
+      });
+  }, [input]);
+
+  function handleSubmit(e) {
     e.preventDefault();
-    data.setCity({...data.city ,name : input})
-    setInput('')
-}
+    data.setCity({ ...data.city, name: input, lat: lat, lon: lon });
+    setInput("");
+  }
 
-    return (
+  return (
     <div>
-        <form onSubmit={handleSubmit}>
-        <input type='text' value={input} onChange={(e) => {setInput(e.target.value)}} />
-            <button>Submit</button>
-        </form>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+          }}
+        />
+        <div className="options">
+          <ul className="options-list">
+            {options.map((opt, key) => {
+              return (
+                <li key={key} className="option-item">
+                  <a
+                    href="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setInput(e.target.innerText);
+                      setOptions([]);
+                    }}
+                  >
+                    {opt.name}
+                  </a>
+                  <span>{opt.country}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <button>Submit</button>
+      </form>
     </div>
-  )
+  );
 }
 
-export default WeatherForm
+export default WeatherForm;
