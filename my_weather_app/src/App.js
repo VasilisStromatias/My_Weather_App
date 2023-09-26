@@ -14,6 +14,7 @@ function App() {
     lon: "",
     opts: [],
     weather: "",
+    forecast:[]
   });
   const [weather, setWeather] = useState("");
   const sessionData = { city, setCity };
@@ -43,6 +44,7 @@ function App() {
         });
     }
   }, [city.name]);
+
 
   //Check the weather (from API) and set the state weather to some value
   useEffect(() => {

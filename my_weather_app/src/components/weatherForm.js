@@ -80,7 +80,7 @@ function WeatherForm({ data }) {
                         onClick={(e) => {
                           e.preventDefault();
                           setInput(e.target.innerText);
-                          setOptions([]);
+                          setOptions([]);        
                         }}
                       >
                         {opt.name}
