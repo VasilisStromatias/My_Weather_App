@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+import { LuSearch } from "react-icons/lu";
+
 function WeatherForm({ data }) {
   const [input, setInput] = useState("");
   const [lat, setLat] = useState(0);
@@ -22,7 +24,7 @@ function WeatherForm({ data }) {
         setLon(lo);
 
         // FOR THE OPTIONS
-        console.log(response.data); // (5) [{…}, {…}, {…}, {…}, {…}]
+        //console.log(response.data);
         setOptions(response.data);
       })
       .catch((error) => {
@@ -37,45 +39,50 @@ function WeatherForm({ data }) {
     setOptions([]);
   }
 
-  const filteredProducts = options.filter((opt) => opt.country.includes("GR"));
+  const filteredProducts = options.filter((opt) => opt.country.includes("US"));
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div className="search-wrapper">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-            }}
-          />
-          <div className="search-icon">
-            <input type="submit" />
+    <div className="weather-form-wrapper">
+      <div className="weather-form-inner">
+        <form onSubmit={handleSubmit}>
+          <div className="search-wrapper">
+            <input
+              type="text"
+              value={input}
+              placeholder="Enter your city here..."
+              onChange={(e) => {
+                setInput(e.target.value);
+              }}
+            />
+            <div className="search-icon">
+              <button>
+                <LuSearch />
+              </button>
+            </div>
+            <div className="options">
+              <ul className="options-list">
+                {filteredProducts.map((opt, key) => {
+                  return (
+                    <li key={key} className="option-item">
+                      <a
+                        href="/"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setInput(e.target.innerText);
+                          setOptions([]);
+                        }}
+                      >
+                        {opt.name}
+                      </a>
+                      {/* <span>{opt.country}</span> */}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
-          <div className="options">
-            <ul className="options-list">
-              {filteredProducts.map((opt, key) => {
-                return (
-                  <li key={key} className="option-item">
-                    <a
-                      href="/"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setInput(e.target.innerText);
-                        setOptions([]);
-                      }}
-                    >
-                      {opt.name}
-                    </a>
-                    <span>{opt.country}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
