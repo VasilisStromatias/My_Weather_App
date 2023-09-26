@@ -9,37 +9,48 @@ function WeatherForm({ data }) {
   const [lon, setLon] = useState(0);
   const [options, setOptions] = useState([]);
 
-  const GEO_API_KEY = "8f81e9f0ce84e9bd3fe8f09a74cdd101";
+  const GEO_API_KEY = process.env.REACT_APP_GEO_API_KEY;
   const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${GEO_API_KEY}`;
+
+  //Take from the API the coords and the other options from the search
+  //Fill the states with the data we took from the API
   useEffect(() => {
-    axios
-      .get(geoUrl)
-      .then((response) => {
-        const res = response.data[0];
+    if (input) {
+      axios
+        .get(geoUrl)
+        .then((response) => {
+          const res = response.data[0];
 
-        // FOR THE COORDS
-        const la = res.lat.toString();
-        const lo = res.lon.toString();
-        setLat(la);
-        setLon(lo);
+          // FOR THE COORDS
+          const la = res.lat.toString();
+          const lo = res.lon.toString();
+          setLat(la);
+          setLon(lo);
 
-        // FOR THE OPTIONS
-        //console.log(response.data);
-        setOptions(response.data);
-      })
-      .catch((error) => {
-        console.log("Insert City");
-      });
+          // FOR THE OPTIONS
+          setOptions(response.data);
+        })
+        .catch((error) => {
+          console.log("Insert City");
+        });
+    }
   }, [input]);
 
+  // Pass onSubmit the state values from this page to the main state(city) to the App.js
   function handleSubmit(e) {
     e.preventDefault();
-    data.setCity({ ...data.city, name: input, lat: lat, lon: lon });
+    data.setCity({
+      ...data.city,
+      name: input,
+      lat: lat,
+      lon: lon,
+      opts: options,
+    });
     setInput("");
     setOptions([]);
   }
 
-  const filteredProducts = options.filter((opt) => opt.country.includes("US"));
+  const filteredProducts = options.filter((opt) => opt.country.includes("GR"));
 
   return (
     <div className="weather-form-wrapper">
@@ -55,7 +66,7 @@ function WeatherForm({ data }) {
               }}
             />
             <div className="search-icon">
-              <button>
+              <button type="submit">
                 <LuSearch />
               </button>
             </div>
